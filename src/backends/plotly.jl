@@ -909,10 +909,15 @@ end
 function js_body(plt::Plot{PlotlyBackend}, uuid)
     js = """
           PLOT = document.getElementById('$(uuid)');
-          Plotly.plot(PLOT, $(plotly_series_json(plt)), $(plotly_layout_json(plt)));
+          Plotly.plot(PLOT, $(plotly_series_json(plt)), $(plotly_layout_json(plt))$(_plotly_config(plt)));
     """
 end
 
+_plotly_config(plt::Plot{PlotlyBackend}) = if haskey(plt.attr, :plotly_config)
+        ", {$(join(["$k:$v" for (k,v) in plt.attr[:plotly_config]], ","))}"
+    else
+         ""
+    end
 
 # ----------------------------------------------------------------
 
