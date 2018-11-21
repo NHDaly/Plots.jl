@@ -43,6 +43,13 @@ const _plotly_legend_pos = KW(
 plotly_legend_pos(pos::Symbol) = get(_plotly_legend_pos, pos, [1.,1.])
 plotly_legend_pos(v::Tuple{S,T}) where {S<:Real, T<:Real} = v
 
+const _plotly_legend_anchor = KW(
+    :left => [:right, :auto],
+    :topleft => [:right, :auto],
+    )
+plotly_legend_anchor(legend::Any) = [:auto, :auto]
+plotly_legend_anchor(legendpos::Symbol) = get(_plotly_legend_anchor, legendpos, [:auto, :auto])
+
 function plotly_font(font::Font, color = font.color)
     KW(
         :family => font.family,
@@ -295,6 +302,7 @@ function plotly_layout(plt::Plot)
         # legend
         plotattributes_out[:showlegend] = sp[:legend] != :none
         xpos,ypos = plotly_legend_pos(sp[:legend])
+        xanchor,yanchor = plotly_legend_anchor(sp[:legend])
         if sp[:legend] != :none
             plotattributes_out[:legend] = KW(
                 :bgcolor  => rgba_string(sp[:background_color_legend]),
@@ -302,7 +310,9 @@ function plotly_layout(plt::Plot)
                 :font     => plotly_font(legendfont(sp)),
                 :tracegroupgap => 0,
                 :x => xpos,
-                :y => ypos
+                :y => ypos,
+                :xanchor => xanchor,
+                :yanchor => yanchor,
             )
         end
 
